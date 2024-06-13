@@ -108,3 +108,12 @@ export function updateNode(node, prevVal, nextVal) {
     }
   })
 }
+
+/**
+ *
+ * @returns 返回当前时间
+ * 关于 performance API 的说明，可以参阅：https://developer.mozilla.org/zh-CN/docs/Web/API/Performance/now
+ */
+export function getCurrentTime() {
+  return performance.now()
+}
