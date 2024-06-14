@@ -38,7 +38,7 @@ export function placeChild(newFiber, lastPlacedIndex, newIndex, shouldTrackSideE
   if (current) {
     // 首先获取到旧的 fiber 的 index 值
     const oldIndex = current.index
-    if (oldIndex > lastPlacedIndex) {
+    if (oldIndex < lastPlacedIndex) {
       // 说明当前的节点是需要移动的
       newFiber.flags |= Placement
       return lastPlacedIndex
@@ -89,7 +89,7 @@ export function deleteRemainingChildren(returnFiber, currentFirstChild) {
  * 将旧的子节点构建到一个 map 结构里面
  * @param {*} currentFirstChild
  */
-export function mapRemainingChildren(returnFiber, currentFirstChild) {
+export function mapRemainingChildren( currentFirstChild) {
   // 首先第一步肯定是创建一个 map
   const existingChildren = new Map()
 

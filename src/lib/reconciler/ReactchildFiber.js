@@ -1,5 +1,5 @@
 import { isStrOrNum, isArray, Update } from '../shared/utils'
-import { placeChild, sameNode, deleteRemainingChildren, mapRemainingChildren,deleteChild} from './ReactChildFiberAssistant'
+import { placeChild, sameNode, deleteRemainingChildren, mapRemainingChildren, deleteChild } from './ReactChildFiberAssistant'
 import createFiber from './ReactFiber'
 
 /**
@@ -129,7 +129,7 @@ export function reconcilerChild(returnFiber, childern) {
     for (; i < newChildren.length; i++) {
       const newChildVnode = newChildren[i]
       // 那么我们这一次就不处理，直接跳到下一次
-      if (newChildVnode === null) continue
+      if (newChildVnode === null || newChildVnode === undefined) continue
       // console.log(newChildren.length, 'length')
       const newFiber = createFiber(newChildVnode, returnFiber)
       // console.log(newFiber, 'newFiber')
@@ -193,8 +193,8 @@ export function reconcilerChild(returnFiber, childern) {
     previousNewFiber = newFiber
 
     // 5. 整个新节点遍历完成后，如果 map 中还有剩余的旧节点，这些旧节点也就没有用了，直接删除即可
-    if(shouldTrackSideEffects) {
-      existingChildren.forEach(child => deleteChild(returnFiber, child))
+    if (shouldTrackSideEffects) {
+      existingChildren.forEach((child) => deleteChild(returnFiber, child))
     }
   }
 }
