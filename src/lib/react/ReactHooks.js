@@ -71,11 +71,12 @@ function updateWorkInProgressHook() {
  */
 function dispatchReducerAction(fiber, hook, reducer, action) {
   // 下面的代码能够得到一个最新的状态
-  hook.memorizedState = reducer ? reducer(hook.memorizedState, action) : action
+  hook.memorizedState = reducer ? reducer(hook.memorizedState) : action
   // 状态更新完毕，该 fiber 就是旧的 fiber，我们需要对这个 fiber 进行一个处理
   fiber.alternate = { ...fiber }
   // 将相邻的 fiber 节点置为 null，不去更新相邻的节点
   fiber.sibling = null
+  
   scheduleUpdateOnFiber(fiber)
 }
 
@@ -105,7 +106,6 @@ export function useReducer(reducer, initialState) {
   }
 
   const dispatch = dispatchReducerAction.bind(null, currentlyRenderingFiber, hook, reducer)
-
   return [hook.memorizedState, dispatch]
 }
 

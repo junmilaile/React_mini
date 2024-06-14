@@ -1,11 +1,10 @@
 import ReactDOM from './lib/react-dom/ReactDom'
-import App from './App'
+// import App from './App'
+import TodoList from './TodoList'
 
 const root = ReactDOM.createRoot(document.getElementById('root'))
 
-root.render(
-  <App id="testId"/>
-)
+root.render(<TodoList />)
 
 // root.render(
 //   <div id="oDiv" className="test">
