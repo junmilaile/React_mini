@@ -1,4 +1,4 @@
-import { isStr, isArray, Update } from '../shared/utils'
+import { isStrOrNum, isArray, Update } from '../shared/utils'
 import { placeChild, sameNode, deleteRemainingChildren, mapRemainingChildren,deleteChild} from './ReactChildFiberAssistant'
 import createFiber from './ReactFiber'
 
@@ -10,7 +10,7 @@ import createFiber from './ReactFiber'
 export function reconcilerChild(returnFiber, childern) {
   // 如果 children 是一个字符串，那么说明这是一个文本节点
   // 那么这个文本节点我们已经在 updateNode 方法中处理过了，所以这里就不需要再处理了
-  if (isStr(childern)) return
+  if (isStrOrNum(childern)) return
 
   // 接下来需要做一些准备工作
   // 如果只有一个子节点，那么 children 就是一个 vnode 对象

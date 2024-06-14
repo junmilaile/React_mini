@@ -1,4 +1,4 @@
-import { Placement, isStr, isFn, isUndefined } from '../shared/utils'
+import { Placement, isStrOrNum, isFn, isUndefined } from '../shared/utils'
 import { FunctionComponent, ClassComponent, HostComponent, HostText, Fragment } from './ReactWorkTags'
 /**
  *
@@ -34,7 +34,7 @@ function createFiber(vnode, returnFiber) {
   // 这个 tag 值是什么取决于 fiber 的 type 值
   // 不同的 vnode 类型，type 是有所不同的
   const type = vnode.type
-  if (isStr(type)) {
+  if (isStrOrNum(type)) {
     fiber.tag = HostComponent
   } else if (isFn(type)) {
     // 注意这里会有两种情况：函数组件和类组件的 type 都是 function
