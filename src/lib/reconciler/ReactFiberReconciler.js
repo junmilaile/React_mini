@@ -1,5 +1,6 @@
 import { updateNode } from '../shared/utils'
 import { reconcilerChild } from './ReactchildFiber'
+import { renderWithHooks } from '../react/ReactHooks'
 /**
  *
  * @param {*} wip 需要处理的 fiber 对象节点
@@ -10,11 +11,11 @@ export function updateHostComponent(wip) {
   if (!wip.stateNode) {
     wip.stateNode = document.createElement(wip.type)
     updateNode(wip.stateNode, {}, wip.props)
-    // 到目前为止，说明当前的 fiber 节点所对应的 stateNode 已经有值了，也就是说有对应的 DOM 了
-    // 因此接下来的下一步，我们就应该处理子节点了
-    reconcilerChild(wip, wip.props.children)
-    // 上一步执行完毕后，说明已经处理完了所有的子节点 vnode，fiber 的链表也就形成了
   }
+  // 到目前为止，说明当前的 fiber 节点所对应的 stateNode 已经有值了，也就是说有对应的 DOM 了
+  // 因此接下来的下一步，我们就应该处理子节点了
+  reconcilerChild(wip, wip.props.children)
+  // 上一步执行完毕后，说明已经处理完了所有的子节点 vnode，fiber 的链表也就形成了
 }
 
 /**
@@ -29,6 +30,9 @@ export function updateHostTextComponent(wip) {
  * @param {*} wip
  */
 export function updateFunctionComponent(wip) {
+  // 进入到这里，也就是说，我确定你是一个函数组件
+  // 那么在处理 fiber 树之前，我们先处理 hooks
+  renderWithHooks(wip)
   const { type, props } = wip
   // 这里从当前的 wip 上面获取到的 type 是一个函数
   // 那么我们就直接执行这个函数，获取到它的返回值
@@ -42,11 +46,11 @@ export function updateFunctionComponent(wip) {
  * @param {*} wip
  */
 export function updatClassComponent(wip) {
-  const {type, props} = wip
+  const { type, props } = wip
 
   const instance = new type(props)
 
   const childre = instance.render()
-  
+
   reconcilerChild(wip, childre)
 }

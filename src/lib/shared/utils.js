@@ -18,8 +18,8 @@ export const Deletion = 0b0000000000000000001000 // 8
  * @param {*} s
  * @returns
  */
-export function isStr(s) {
-  return typeof s === 'string'
+export function isStrOrNum(s) {
+  return typeof s === 'string' || typeof s === 'number'
 }
 
 /**
@@ -41,8 +41,8 @@ export function isUndefined(s) {
 }
 /**
  * 判断参数 arr 是否为数组
- * @param {*} arr 
- * @returns 
+ * @param {*} arr
+ * @returns
  */
 export function isArray(arr) {
   return Array.isArray(arr)
@@ -61,7 +61,7 @@ export function updateNode(node, prevVal, nextVal) {
   // 步骤一：对旧值进行处理
   Object.keys(prevVal).forEach((k) => {
     if (k === 'children') {
-      if (isStr(prevVal[k])) {
+      if (isStrOrNum(prevVal[k])) {
         node.textContent = ''
       }
     } else if (k.startsWith('on')) {
@@ -88,7 +88,7 @@ export function updateNode(node, prevVal, nextVal) {
   // 步骤二：对新值进行处理
   Object.keys(nextVal).forEach((k) => {
     if (k === 'children') {
-      if (isStr(nextVal[k])) {
+      if (isStrOrNum(nextVal[k])) {
         node.textContent = nextVal[k]
       }
     } else if (k.startsWith('on')) {
