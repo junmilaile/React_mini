@@ -1,9 +1,24 @@
 import propTypes from 'prop-types'
-import { useState } from './lib/react/ReactHooks'
+import { useEffect, useState, useReducer } from './lib/react/ReactHooks'
 
 function App({ id }) {
   const [count, setCount] = useState(0)
+  const [count2, setCount2] = useReducer((x) => x + 1, 0)
+  useEffect(() => {
+    console.log('执行副作用方法1')
+    // 清理函数，会在下一次执行副作用函数之前执行
+    return function () {
+      console.log('执行了清理方法1')
+    }
+  }, [count])
 
+  useEffect(() => {
+    console.log('执行副作用方法2')
+    // 清理函数，会在下一次执行副作用函数之前执行
+    return function () {
+      console.log('执行了清理方法2')
+    }
+  }, [count2])
   return (
     <div className="container" id={id}>
       <div className="one">
@@ -17,9 +32,16 @@ function App({ id }) {
         </div>
       </div>
       <p>this is a tes1</p>
-      <button onClick={() => setCount(count + 1)}>+</button>
-      <span>{count}</span>
-      <button onClick={() => setCount(count - 1)}>-</button>
+      <div>
+        <button onClick={() => setCount(count + 1)}>+</button>
+        <span>{count}</span>
+        <button onClick={() => setCount(count - 1)}>-</button>
+      </div>
+      <div>
+        <button onClick={() => setCount2(count2 + 1)}>+</button>
+        <span>{count2}</span>
+        <button onClick={() => setCount2(count2 - 1)}>-</button>
+      </div>
     </div>
   )
 }

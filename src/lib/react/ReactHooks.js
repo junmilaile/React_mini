@@ -2,7 +2,7 @@
  * 该文件就是用于实现各种 Hooks
  */
 import scheduleUpdateOnFiber from '../reconciler/ReactFiberWorkLoop'
-
+import { areHookInputEqual } from '../shared/utils'
 // 首先我们先定义一些全部变量
 let currentlyRenderingFiber = null // 当前渲染的 fiber 对象
 let workInProgressHook = null // 当前正在处理的 hook
@@ -107,4 +107,38 @@ export function useReducer(reducer, initialState) {
   const dispatch = dispatchReducerAction.bind(null, currentlyRenderingFiber, hook, reducer)
 
   return [hook.memorizedState, dispatch]
+}
+
+/**
+ *
+ * @param {*} create 要执行的副作用函数
+ * @param {*} deps 依赖项
+ */
+export function useEffect(create, deps) {
+  // 获取最后一个 hook
+  const hook = updateWorkInProgressHook()
+  // 用于存储销毁函数
+  let destroy = null
+
+  if (currentHook) {
+    // 如果存在 currentHook，我们就从 hook 中获取副作用函数和依赖项
+    const prevEffect = currentHook.memorizedState
+    // 保存一下上一次的销毁函数
+    destroy = prevEffect.destroy
+    // 判断是否有依赖项
+    if (deps) {
+      // 进入此分支，说明本次也有依赖项，先取出上一次的依赖项，和本次的依赖项挨着挨着进行一个比较
+      const prevDeps = prevEffect.deps
+      if (areHookInputEqual(deps, prevDeps)) {
+        // 说明依赖项没有变化，不需要执行副作用函数，直接返回
+        return
+      }
+    }
+  }
+  // 组装要存储到 memorizedState 中的数据
+  const effect = { create, deps, destroy }
+  hook.memorizedState = effect
+  // 接下来我们需要执行副作用函数
+  // 注意这里并非直接执行，推入到 updateQueue 数组中
+  currentlyRenderingFiber.updateQueue.push(effect)
 }

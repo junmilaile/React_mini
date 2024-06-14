@@ -117,3 +117,21 @@ export function updateNode(node, prevVal, nextVal) {
 export function getCurrentTime() {
   return performance.now()
 }
+
+/**
+ * 比较两个依赖项数组的每一项是否相同
+ * 如果都相同，返回 true，否则返回 false
+ * @param {*} nextDeps 新的依赖项数组
+ * @param {*} prevDeps 旧的依赖项数组
+ */
+export function areHookInputEqual(nextDeps, prevDeps) {
+  if (prevDeps === null) return false
+  for (let i = 0; i < prevDeps.length && i < nextDeps.length; i++) {
+    // Object.is 是一个静态方法，用来严格比较两个值是否相同
+    if (Object.is(nextDeps[i], prevDeps[i])) continue
+    // 只要有一项不相等，就返回 false
+    return false
+  }
+  // 上面的整个循环都跑完了都没有返回 false，说明两个依赖项数组是相等的
+  return true
+}

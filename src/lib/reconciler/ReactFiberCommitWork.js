@@ -1,4 +1,6 @@
 import { Placement, Update, updateNode } from '../shared/utils'
+import { FunctionComponent } from './ReactWorkTags'
+import { invokeHooks } from './ReactChildFiberAssistant'
 
 function getParentDom(wip) {
   let temp = wip
@@ -15,16 +17,23 @@ function getParentDom(wip) {
 function commitNode(wip) {
   // 1. 首先第一步，我们需要获取该 fiber 所对应的父节点的 DOM 对象
   const parentNodeDOM = getParentDom(wip.return)
-  // console.log(parentNodeDOM, 'parentNodeDOM')
   // 从 fiber 对象上面拿到 flags 和 stateNode
   const { flags, stateNode } = wip
 
+  // 接下来我们需要根据不同的 flags 做不同的操作
   if (flags & Placement && stateNode) {
     parentNodeDOM.appendChild(wip.stateNode)
   }
 
   if (flags & Update && stateNode) {
+    // 这里就应该是更新属性的操作了
     updateNode(stateNode, wip.alternate.props, wip.props)
+  }
+
+  if (wip.tag === FunctionComponent) {
+    // 进入此 if，说明当前的 fiber 对象的类型为函数类型
+    // 那么我们处理一下 hook
+    invokeHooks(wip)
   }
 }
 

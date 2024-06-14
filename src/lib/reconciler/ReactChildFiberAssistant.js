@@ -3,7 +3,7 @@
  */
 
 import { Placement } from '../shared/utils'
-
+import scheduleCallback from '../scheduler/Scheduler'
 /**
  * 判断是否为相同
  * 1. 同一层级下面
@@ -79,7 +79,7 @@ export function deleteChild(returnFiber, childToDelete) {
  */
 export function deleteRemainingChildren(returnFiber, currentFirstChild) {
   let childToDelete = currentFirstChild
-  while(childToDelete) {
+  while (childToDelete) {
     deleteChild(returnFiber, childToDelete)
     childToDelete = childToDelete.sibling
   }
@@ -91,18 +91,38 @@ export function deleteRemainingChildren(returnFiber, currentFirstChild) {
  */
 export function mapRemainingChildren(returnFiber, currentFirstChild) {
   // 首先第一步肯定是创建一个 map
-    const existingChildren = new Map()
+  const existingChildren = new Map()
 
-    let existingChild = currentFirstChild
+  let existingChild = currentFirstChild
 
-    while(existingChild) {
-      existingChildren.set(
-        existingChild.key || existingChild.index,
-        existingChild
-      )
-       // 切换到下一个兄弟节点
-      existingChild = existingChild.sibling
+  while (existingChild) {
+    existingChildren.set(existingChild.key || existingChild.index, existingChild)
+    // 切换到下一个兄弟节点
+    existingChild = existingChild.sibling
+  }
+
+  return existingChildren
+}
+
+/**
+ * 取出该 fiber 对象中的 updateQueue 里面的副作用函数，依次执行
+ * @param {*} wip
+ */
+export function invokeHooks(wip) {
+  const { updateQueue } = wip
+
+  for (let i = 0; i < updateQueue.length; i++) {
+    // 取出每一个副作用对象
+    const effect = updateQueue[i]
+
+    // 检查是否有清除方法，有的话就先执行清除方法
+    if (effect.destroy) {
+      effect.destroy()
     }
-
-    return existingChildren
+    // 接下来就应该执行副作用函数了
+    // 注意这里并非直接执行，而是创建一个任务，放入到任务队列中
+    scheduleCallback(() => {
+      effect.destroy = effect.create()
+    })
+  }
 }
